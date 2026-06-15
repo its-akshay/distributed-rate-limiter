@@ -1,0 +1,16 @@
+services:
+  redis:
+    image: redis:7
+    container_name: rate-limiter-redis
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:16
+    container_name: rate-limiter-postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ratelimiter
+    ports:
+      - "5432:5432"
