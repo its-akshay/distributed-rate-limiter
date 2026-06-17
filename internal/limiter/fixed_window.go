@@ -40,3 +40,16 @@ func (l* FixedWindowLimiter) Allow(
 	}
 	return count <= int64(limit), nil
 }
+
+/*
+
+Issue with the fixed window approach
+if my window is of 1 man say
+12:00:00 to 12:01:00
+
+if a request came at 12:00:55 then it will get accepted as well 
+ans after lets say at 12:01:00 another request came since this is in another window it will also get accepted
+but in reality in span of 3 seconds all these requests are accepted
+
+
+*/

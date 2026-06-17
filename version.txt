@@ -1,0 +1,17 @@
+version 1.4:
+lua_sliding_window.go acts as a bridge between Go and Redis Lua script,
+executing the rate limiting logic atomically and returning allow/reject.
+
+
+Execute all Redis operations atomically using Lua scripts.
+Operations executed atomically:
+Remove expired requests
+Count requests
+Insert new request
+Set expiry
+This guarantees consistent rate limiting across multiple service instances.
+
+100 requests per 60 seconds
+
+
+Lua is checking whether a request should be accepted or rejected

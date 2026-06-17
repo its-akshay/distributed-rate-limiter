@@ -11,12 +11,12 @@ import (
 
 type RateLimiterService struct {
 	repo    *repository.RuleRepository
-	limiter *limiter.FixedWindowLimiter
+	limiter limiter.RateLimiter
 }
 
 func NewRateLimiterService(
 	repo *repository.RuleRepository,
-	limiter *limiter.FixedWindowLimiter,
+	limiter limiter.RateLimiter,
 ) *RateLimiterService {
 	return &RateLimiterService{
 		repo:    repo,

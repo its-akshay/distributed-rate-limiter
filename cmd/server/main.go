@@ -39,17 +39,19 @@ func main() {
 	fmt.Println("Redis connected")
 
 	repo := repository.NewRuleRepository(pg)
-	fw := limiter.NewFixedWindowLimiter(rdb)
+	luaLimiter := limiter.NewLuaSlidingWindowLimiter(rdb)
 	rateLimiterService := service.NewRateLimiterService(
 		repo,
-		fw,
+		luaLimiter,
 	)
 	ruleHandler := handler.NewRuleHandler(repo, rateLimiterService)
 	router := gin.Default()
 
+	// sw := limiter.NewSlidingWindowLimiter(rdb)
+
 	router.POST("/rules", ruleHandler.CreateRule)
-	router.GET("rules/:id", ruleHandler.GetRule)
-	router.GET("rules", ruleHandler.ListRules)
+	router.GET("/rules/:id", ruleHandler.GetRule)
+	router.GET("/rules", ruleHandler.ListRules)
 	router.POST("/check", ruleHandler.Check)
 
 	router.Run(":8080")
