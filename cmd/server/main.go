@@ -9,7 +9,9 @@ import (
 	"github.com/its-akshay/distributed-rate-limiter/internal/config"
 	"github.com/its-akshay/distributed-rate-limiter/internal/database"
 	"github.com/its-akshay/distributed-rate-limiter/internal/handler"
+	"github.com/its-akshay/distributed-rate-limiter/internal/limiter"
 	"github.com/its-akshay/distributed-rate-limiter/internal/repository"
+	"github.com/its-akshay/distributed-rate-limiter/internal/service"
 )
 
 func main() {
@@ -37,15 +39,19 @@ func main() {
 	fmt.Println("Redis connected")
 
 	repo := repository.NewRuleRepository(pg)
-	ruleHandler := handler.NewRuleHandler(repo)
+	fw := limiter.NewFixedWindowLimiter(rdb)
+	rateLimiterService := service.NewRateLimiterService(
+		repo,
+		fw,
+	)
+	ruleHandler := handler.NewRuleHandler(repo, rateLimiterService)
 	router := gin.Default()
 
 	router.POST("/rules", ruleHandler.CreateRule)
 	router.GET("rules/:id", ruleHandler.GetRule)
 	router.GET("rules", ruleHandler.ListRules)
+	router.POST("/check", ruleHandler.Check)
 
 	router.Run(":8080")
 
 }
-
-

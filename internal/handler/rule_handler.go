@@ -8,15 +8,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/its-akshay/distributed-rate-limiter/internal/model"
 	"github.com/its-akshay/distributed-rate-limiter/internal/repository"
+	"github.com/its-akshay/distributed-rate-limiter/internal/service"
 )
 
 type RuleHandler struct {
-	repo *repository.RuleRepository
+	repo    *repository.RuleRepository
+	service *service.RateLimiterService
 }
 
-func NewRuleHandler(repo *repository.RuleRepository) *RuleHandler {
+func NewRuleHandler(repo *repository.RuleRepository, service *service.RateLimiterService) *RuleHandler {
 	return &RuleHandler{
-		repo: repo,
+		repo:    repo,
+		service: service,
 	}
 }
 
@@ -68,4 +71,30 @@ func (h *RuleHandler) ListRules(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, rules)
+}
+
+func (h *RuleHandler) Check(c *gin.Context) {
+	var req model.CheckRequest
+
+	if err:=c.ShouldBindJSON(&req); err!=nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":err.Error(),
+		})
+		return
+	}
+	allowed, err:=h.service.Check(
+		c.Request.Context(),
+		req.Key,
+		req.RuleID,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.CheckResponse{
+		Allowed: allowed,
+	})
 }
