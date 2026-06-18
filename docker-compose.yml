@@ -1,16 +1,27 @@
-services:
-  redis:
-    image: redis:7
-    container_name: rate-limiter-redis
-    ports:
-      - "6379:6379"
+version: "3.9"
 
+services:
   postgres:
     image: postgres:16
-    container_name: rate-limiter-postgres
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: ratelimiter
     ports:
       - "5432:5432"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      POSTGRES_URL: postgres://admin:password@postgres:5432/ratelimiter?sslmode=disable
+      REDIS_ADDR: redis:6379

@@ -2,8 +2,7 @@ package limiter
 
 import (
 	"context"
-	_"embed"
-	"fmt"
+	_ "embed"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -18,7 +17,6 @@ type LuaSlidingWindowLimiter struct {
 }
 
 func NewLuaSlidingWindowLimiter(rdb *redis.Client) *LuaSlidingWindowLimiter {
-	fmt.Println(len(slidingWindowScript))
 	return &LuaSlidingWindowLimiter{
 		rdb:    rdb,
 		script: redis.NewScript(slidingWindowScript),
