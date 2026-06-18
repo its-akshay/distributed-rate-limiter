@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -15,9 +16,21 @@ import (
 	"github.com/its-akshay/distributed-rate-limiter/internal/handler"
 	"github.com/its-akshay/distributed-rate-limiter/internal/limiter"
 	"github.com/its-akshay/distributed-rate-limiter/internal/metrics"
+	"github.com/its-akshay/distributed-rate-limiter/internal/migration"
 	"github.com/its-akshay/distributed-rate-limiter/internal/repository"
 	"github.com/its-akshay/distributed-rate-limiter/internal/service"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "github.com/its-akshay/distributed-rate-limiter/docs"
 )
+
+// @title Distributed Rate Limiter API
+// @version 1.0
+// @description Distributed Rate Limiter using Go, Redis and PostgreSQL
+// @host localhost:8080
+// @BasePath /
 
 func main() {
 
@@ -43,6 +56,12 @@ func main() {
 	}
 
 	fmt.Println("PostgresSQL connected")
+	wd, _ := os.Getwd()
+	log.Println("Working directory:", wd)
+	err = migration.Run(cfg.PostgresURL)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	rdb := database.NewRedis(cfg.RedisAddr)
 
@@ -65,6 +84,10 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 	// sw := limiter.NewSlidingWindowLimiter(rdb)
+	router.GET(
+		"/swagger/*any",
+		ginSwagger.WrapHandler(swaggerFiles.Handler),
+	)
 
 	router.POST("/rules", ruleHandler.CreateRule)
 	router.GET("/rules/:id", ruleHandler.GetRule)

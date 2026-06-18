@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS rules (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    limit_count INTEGER NOT NULL,
+    window_seconds INTEGER NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
