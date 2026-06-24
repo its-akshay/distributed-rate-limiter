@@ -26,3 +26,6 @@ v0.5  Prometheus Metrics
 v0.6  Grafana Dashboard
 v1.0  Auto Migrations + Swagger
 v1.1  Kubernetes Deployment
+
+v1.2 persistent volume + HPA
+    add Kubernetes deployment with ConfigMap, Secret and PVC
