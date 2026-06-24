@@ -15,3 +15,14 @@ This guarantees consistent rate limiting across multiple service instances.
 
 
 Lua is checking whether a request should be accepted or rejected
+
+
+
+v0.1  Core Rate Limiter
+v0.2  Sliding Window + Redis
+v0.3  Lua Atomic Limiter
+v0.4  Dockerized
+v0.5  Prometheus Metrics
+v0.6  Grafana Dashboard
+v1.0  Auto Migrations + Swagger
+v1.1  Kubernetes Deployment
