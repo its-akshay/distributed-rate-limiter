@@ -32,3 +32,10 @@ v1.2 persistent volume + HPA
 
 v1.3 Liveness Probe: Ensures the application is running and responsive. 
      Readiness Probe: Ensures the application is ready to serve requests. 
+
+v1.4 Add: Ingress
+curl -> localhost:8080 -> Port Forward -> service -> pod
+
+becomes=>
+
+curl->rate-limiter.local->Ingress Controller->Ingress Rules->Service->Pod
