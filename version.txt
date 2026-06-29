@@ -29,3 +29,6 @@ v1.1  Kubernetes Deployment
 
 v1.2 persistent volume + HPA
     add Kubernetes deployment with ConfigMap, Secret and PVC
+
+v1.3 Liveness Probe: Ensures the application is running and responsive. 
+     Readiness Probe: Ensures the application is ready to serve requests. 

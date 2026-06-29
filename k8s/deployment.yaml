@@ -17,23 +17,37 @@ spec:
 
     spec:
       containers:
-      - name: rate-limiter
+        - name: rate-limiter
 
-        image: distributed-rate-limiter:latest
-        imagePullPolicy: Never
+          image: distributed-rate-limiter:latest
+          imagePullPolicy: Never
 
-        envFrom:
-        - configMapRef:
-            name: rate-limiter-config
+          envFrom:
+            - configMapRef:
+                name: rate-limiter-config
 
-        ports:
-        - containerPort: 8080
+          ports:
+            - containerPort: 8080
 
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
 
-          limits:
-            cpu: "500m"
-            memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+
+            limits:
+              cpu: "500m"
+              memory: "256Mi"

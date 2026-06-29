@@ -95,6 +95,11 @@ func main() {
 	router.POST("/check", ruleHandler.Check)
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
+	healthHandler := handler.NewHealthHandler(pg, rdb)
+
+	router.GET("/health", healthHandler.Health)
+	router.GET("/ready", healthHandler.Ready)
+
 	router.Run(":8080")
 
 }
