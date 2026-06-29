@@ -25,10 +25,10 @@ func NewHealthHandler(
 
 func (h *HealthHandler) Health(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"status": "ok",
+		"status":  "ok",
+		"version": "v5",
 	})
 }
-
 
 func (h *HealthHandler) Ready(c *gin.Context) {
 

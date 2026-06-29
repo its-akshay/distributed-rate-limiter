@@ -39,3 +39,8 @@ curl -> localhost:8080 -> Port Forward -> service -> pod
 becomes=>
 
 curl->rate-limiter.local->Ingress Controller->Ingress Rules->Service->Pod
+
+v1.5 Rolling update:
+- Implemented Kubernetes Rolling Updates for zero-downtime deployments.
+- Configured maxSurge: 1 and maxUnavailable: 1.
+- Verified seamless application upgrades by deploying new versions and observing gradual Pod replacement.

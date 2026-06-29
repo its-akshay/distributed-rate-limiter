@@ -4,7 +4,13 @@ metadata:
   name: rate-limiter
 
 spec:
-  replicas: 1
+  replicas: 4
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
 
   selector:
     matchLabels:
