@@ -33,7 +33,7 @@ definitions:
       window_seconds:
         type: integer
     type: object
-host: localhost:8080
+host: rate-limiter.local
 info:
   contact: {}
   description: Distributed Rate Limiter using Go, Redis and PostgreSQL
