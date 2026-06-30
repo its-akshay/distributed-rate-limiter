@@ -16,3 +16,15 @@ spec:
             name: rate-limiter
             port: 
               number: 8080
+
+  - host: grafana.local
+
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 3000

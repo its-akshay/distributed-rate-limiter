@@ -17,3 +17,11 @@ A distributed rate limiting service built using Go, Redis, PostgreSQL, and Kuber
 - Redis
 - Docker
 - Kubernetes
+
+
+## Grafana Dashboard
+
+The project includes a pre-built Grafana dashboard.
+Import:
+grafana/dashboards/rate-limiter-dashboard.json
+after configuring Prometheus as the data source.
