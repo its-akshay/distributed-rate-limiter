@@ -4,6 +4,8 @@ global:
 scrape_configs:
   - job_name: "rate-limiter"
 
+    metrics_path: /metrics
+
     static_configs:
       - targets:
-          - app:8080
+          - rate-limiter:8080
