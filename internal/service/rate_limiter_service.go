@@ -10,12 +10,12 @@ import (
 )
 
 type RateLimiterService struct {
-	repo    *repository.RuleRepository
+	repo    repository.RuleRepositoryInterface
 	limiter limiter.RateLimiter
 }
 
 func NewRateLimiterService(
-	repo *repository.RuleRepository,
+	repo  repository.RuleRepositoryInterface,
 	limiter limiter.RateLimiter,
 ) *RateLimiterService {
 	return &RateLimiterService{

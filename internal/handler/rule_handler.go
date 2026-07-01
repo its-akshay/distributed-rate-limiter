@@ -13,11 +13,11 @@ import (
 )
 
 type RuleHandler struct {
-	repo    *repository.RuleRepository
-	service *service.RateLimiterService
+	repo    repository.RuleRepositoryInterface
+	service service.RateLimiterServiceInterface
 }
 
-func NewRuleHandler(repo *repository.RuleRepository, service *service.RateLimiterService) *RuleHandler {
+func NewRuleHandler(repo repository.RuleRepositoryInterface, service service.RateLimiterServiceInterface) *RuleHandler {
 	return &RuleHandler{
 		repo:    repo,
 		service: service,
