@@ -4,8 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"time"
+
+	"os/signal"
+	"syscall"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -89,6 +93,11 @@ func main() {
 		ginSwagger.WrapHandler(swaggerFiles.Handler),
 	)
 
+	srv := &http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
+
 	router.POST("/rules", ruleHandler.CreateRule)
 	router.GET("/rules/:id", ruleHandler.GetRule)
 	router.GET("/rules", ruleHandler.ListRules)
@@ -100,6 +109,38 @@ func main() {
 	router.GET("/health", healthHandler.Health)
 	router.GET("/ready", healthHandler.Ready)
 
-	router.Run(":8080")
+	go func() {
+		log.Println("Server started on :8080")
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Server failed: %v", err)
+		}
+	}()
 
+	quit := make(chan os.Signal, 1)
+
+	signal.Notify(
+		quit,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+	)
+	<-quit
+	log.Println("Shutdown signal received")
+
+	ctx, cancel := context.WithTimeout(
+		context.Background(),
+		10*time.Second,
+	)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatalf("Server shutdown failed: %v", err)
+	}
+
+	if err := rdb.Close(); err != nil {
+		log.Printf("Error closing Redis: %v", err)
+	}
+
+	pg.Close()
+
+	log.Println("Resources closed successfully")
 }

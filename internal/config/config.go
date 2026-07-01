@@ -11,7 +11,7 @@ func Load() *Config {
 	return &Config{
 		PostgresURL: getEnv(
 			"POSTGRES_URL",
-			"postgres://admin:password@localhost:5432/ratelimiter",
+			"postgres://admin:password@localhost:5432/ratelimiter?sslmode=disable",
 		),
 		RedisAddr: getEnv(
 			"REDIS_ADDR",
