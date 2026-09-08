@@ -40,6 +40,13 @@ func (h *HealthHandler) Ready(c *gin.Context) {
 		return
 	}
 
+	err = h.redis.Ping(c.Request.Context()).Err()
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{
+			"status": "redis unavailable",
+		})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"status": "ready",
 	})
