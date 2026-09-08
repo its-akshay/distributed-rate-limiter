@@ -31,7 +31,7 @@ func (s *RateLimiterService) Check(
 ) (bool, error) {
 	rule, err := s.repo.GetById(ctx, ruleId)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("get rule: %w", err)
 	}
 
 	redisKey := fmt.Sprintf(

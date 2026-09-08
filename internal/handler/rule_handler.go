@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -76,8 +77,14 @@ func (h *RuleHandler) GetRule(c *gin.Context) {
 	}
 	rule, err := h.repo.GetById(context.Background(), id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "rule not found",
+		if errors.Is(err, repository.ErrRuleNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "rule not found",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
 		})
 		return
 	}
@@ -130,19 +137,24 @@ func (h *RuleHandler) Check(c *gin.Context) {
 		req.Key,
 		req.RuleID,
 	)
-	if err == nil {
-		if allowed {
-			metrics.AllowedTotal.Inc()
-		} else {
-			metrics.RejectedTotal.Inc()
-		}
-	}
 	if err != nil {
 		metrics.ErrorsTotal.Inc()
+		if errors.Is(err, repository.ErrRuleNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "rule not found",
+			})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
+	}
+
+	if allowed {
+		metrics.AllowedTotal.Inc()
+	} else {
+		metrics.RejectedTotal.Inc()
 	}
 
 	c.JSON(http.StatusOK, model.CheckResponse{

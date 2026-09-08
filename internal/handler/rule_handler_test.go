@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/its-akshay/distributed-rate-limiter/internal/model"
+	"github.com/its-akshay/distributed-rate-limiter/internal/repository"
 )
 
 type mockRuleRepo struct {
@@ -169,8 +170,17 @@ func TestRuleHandler_GetRule(t *testing.T) {
 			name:           "returns 404 when rule does not exist",
 			path:           "/rules/1",
 			pathID:         "1",
-			repo:           &mockRuleRepo{getErr: errors.New("not found")},
+			repo:           &mockRuleRepo{getErr: repository.ErrRuleNotFound},
 			wantStatusCode: http.StatusNotFound,
+			wantGetCall:    true,
+			wantGetID:      1,
+		},
+		{
+			name:           "returns 500 when repository returns a non-not-found error",
+			path:           "/rules/1",
+			pathID:         "1",
+			repo:           &mockRuleRepo{getErr: errors.New("connection closed")},
+			wantStatusCode: http.StatusInternalServerError,
 			wantGetCall:    true,
 			wantGetID:      1,
 		},
@@ -307,6 +317,14 @@ func TestRuleHandler_Check(t *testing.T) {
 			body:           `{"key":"user-1","rule_id":10}`,
 			svc:            &mockRateLimiterService{err: errors.New("service down")},
 			wantStatusCode: http.StatusInternalServerError,
+			wantError:      true,
+			wantSvcCalled:  true,
+		},
+		{
+			name:           "returns 404 when rule does not exist",
+			body:           `{"key":"user-1","rule_id":999}`,
+			svc:            &mockRateLimiterService{err: repository.ErrRuleNotFound},
+			wantStatusCode: http.StatusNotFound,
 			wantError:      true,
 			wantSvcCalled:  true,
 		},

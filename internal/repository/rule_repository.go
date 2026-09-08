@@ -2,8 +2,10 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/its-akshay/distributed-rate-limiter/internal/model"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -51,6 +53,9 @@ func (r *RuleRepository) GetById(ctx context.Context, id int64) (*model.Rule, er
 	)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrRuleNotFound
+		}
 		return nil, err
 	}
 
