@@ -54,7 +54,6 @@ func (h *RuleHandler) CreateRule(c *gin.Context) {
 	c.JSON(http.StatusCreated, rule)
 }
 
-
 // GetRule godoc
 // @Summary Get rule by ID
 // @Description Fetch a rule by ID
@@ -104,7 +103,6 @@ func (h *RuleHandler) ListRules(c *gin.Context) {
 	c.JSON(http.StatusOK, rules)
 }
 
-
 // Check godoc
 // @Summary Check rate limit
 // @Description Evaluates whether a request is allowed
@@ -120,27 +118,29 @@ func (h *RuleHandler) Check(c *gin.Context) {
 	metrics.RequestsTotal.Inc()
 	var req model.CheckRequest
 
-	if err:=c.ShouldBindJSON(&req); err!=nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		metrics.ErrorsTotal.Inc()
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
-	allowed, err:=h.service.Check(
+	allowed, err := h.service.Check(
 		c.Request.Context(),
 		req.Key,
 		req.RuleID,
 	)
-	if allowed {
-        metrics.AllowedTotal.Inc()
-    } else {
-        metrics.RejectedTotal.Inc()
-    }
+	if err == nil {
+		if allowed {
+			metrics.AllowedTotal.Inc()
+		} else {
+			metrics.RejectedTotal.Inc()
+		}
+	}
 	if err != nil {
 		metrics.ErrorsTotal.Inc()
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
