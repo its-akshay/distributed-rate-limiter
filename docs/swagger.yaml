@@ -15,6 +15,15 @@ definitions:
       allowed:
         type: boolean
     type: object
+  model.CreateRuleRequest:
+    properties:
+      limit_count:
+        type: integer
+      name:
+        type: string
+      window_seconds:
+        type: integer
+    type: object
   model.ErrorResponse:
     properties:
       error:
@@ -33,7 +42,6 @@ definitions:
       window_seconds:
         type: integer
     type: object
-host: rate-limiter.local
 info:
   contact: {}
   description: Distributed Rate Limiter using Go, Redis and PostgreSQL
@@ -70,6 +78,42 @@ paths:
       summary: Check rate limit
       tags:
       - Rate Limiter
+  /health:
+    get:
+      description: Returns ok once the process is up
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Liveness check
+      tags:
+      - Health
+  /ready:
+    get:
+      description: Checks Postgres and Redis connectivity
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "503":
+          description: Service Unavailable
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Readiness check
+      tags:
+      - Health
   /rules:
     get:
       description: Returns all configured rate limit rules
@@ -99,7 +143,7 @@ paths:
         name: rule
         required: true
         schema:
-          $ref: '#/definitions/model.Rule'
+          $ref: '#/definitions/model.CreateRuleRequest'
       produces:
       - application/json
       responses:

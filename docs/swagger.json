@@ -6,7 +6,6 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "rate-limiter.local",
     "basePath": "/",
     "paths": {
         "/check": {
@@ -50,6 +49,61 @@
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "description": "Returns ok once the process is up",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Liveness check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ready": {
+            "get": {
+                "description": "Checks Postgres and Redis connectivity",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Readiness check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -102,7 +156,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Rule"
+                            "$ref": "#/definitions/model.CreateRuleRequest"
                         }
                     }
                 ],
@@ -191,6 +245,20 @@
             "properties": {
                 "allowed": {
                     "type": "boolean"
+                }
+            }
+        },
+        "model.CreateRuleRequest": {
+            "type": "object",
+            "properties": {
+                "limit_count": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "window_seconds": {
+                    "type": "integer"
                 }
             }
         },

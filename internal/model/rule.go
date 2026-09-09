@@ -9,3 +9,9 @@ type Rule struct {
 	WindowSeconds int       `json:"window_seconds"`
 	CreatedAt     time.Time `json:"created_at"`
 }
+
+type CreateRuleRequest struct {
+	Name          string `json:"name"`
+	LimitCount    int    `json:"limit_count"`
+	WindowSeconds int    `json:"window_seconds"`
+}

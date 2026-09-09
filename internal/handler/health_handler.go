@@ -23,6 +23,13 @@ func NewHealthHandler(
 	}
 }
 
+// Health godoc
+// @Summary Liveness check
+// @Description Returns ok once the process is up
+// @Tags Health
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /health [get]
 func (h *HealthHandler) Health(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "ok",
@@ -30,6 +37,14 @@ func (h *HealthHandler) Health(c *gin.Context) {
 	})
 }
 
+// Ready godoc
+// @Summary Readiness check
+// @Description Checks Postgres and Redis connectivity
+// @Tags Health
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Failure 503 {object} map[string]string
+// @Router /ready [get]
 func (h *HealthHandler) Ready(c *gin.Context) {
 
 	err := h.db.Ping(c.Request.Context())

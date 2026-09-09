@@ -18,6 +18,7 @@ A production-ready distributed rate limiter built with **Go**, **Redis**, **Post
 * Prometheus metrics
 * Grafana dashboards support
 * Health and Readiness endpoints
+* Interactive API docs via Swagger UI
 * Dockerized application
 * Kubernetes deployment
 * Horizontal Pod Autoscaler (HPA)
@@ -259,6 +260,20 @@ GET /ready
 ```
 
 Readiness endpoint for Kubernetes.
+
+---
+
+## API Documentation (Swagger)
+
+```
+GET /swagger/index.html
+```
+
+Interactive OpenAPI docs for every endpoint, generated with `swag` from annotations in `internal/handler/`. Regenerate after changing any handler annotations:
+
+```bash
+swag init -g cmd/server/main.go -o docs
+```
 
 ---
 

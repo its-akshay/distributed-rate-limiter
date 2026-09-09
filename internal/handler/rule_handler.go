@@ -31,18 +31,24 @@ func NewRuleHandler(repo repository.RuleRepositoryInterface, service service.Rat
 // @Tags Rules
 // @Accept json
 // @Produce json
-// @Param rule body model.Rule true "Rule payload"
+// @Param rule body model.CreateRuleRequest true "Rule payload"
 // @Success 201 {object} model.Rule
 // @Failure 400 {object} model.ErrorResponse
 // @Failure 500 {object} model.ErrorResponse
 // @Router /rules [post]
 func (h *RuleHandler) CreateRule(c *gin.Context) {
-	var rule model.Rule
-	if err := c.ShouldBindJSON(&rule); err != nil {
+	var req model.CreateRuleRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
+	}
+
+	rule := model.Rule{
+		Name:          req.Name,
+		LimitCount:    req.LimitCount,
+		WindowSeconds: req.WindowSeconds,
 	}
 
 	err := h.repo.Create(context.Background(), &rule)

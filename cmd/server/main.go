@@ -33,7 +33,7 @@ import (
 // @title Distributed Rate Limiter API
 // @version 1.0
 // @description Distributed Rate Limiter using Go, Redis and PostgreSQL
-// @host rate-limiter.local
+// @host
 // @BasePath /
 
 func main() {
